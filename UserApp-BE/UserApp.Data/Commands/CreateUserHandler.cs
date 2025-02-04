@@ -1,17 +1,12 @@
 ﻿using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserApp.Core.Models;
-using UserApp.Core.Request;
+using UserApp.Data.Queries;
 
 namespace UserApp.Data.Commands
 {
-    public class CreateUserHandler : IRequestHandler<CreateUserCommand, ErrorOr<GetUserRequest>>
+    public class CreateUserHandler : IRequestHandler<CreateUserCommand, ErrorOr<GetUserResponse>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -20,7 +15,7 @@ namespace UserApp.Data.Commands
             _userManager = userManager;
         }
 
-        public async Task<ErrorOr<GetUserRequest>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<GetUserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var user = new ApplicationUser
             {
@@ -37,7 +32,7 @@ namespace UserApp.Data.Commands
                 return identityErrors;
             }
 
-            return new GetUserRequest
+            return new GetUserResponse
             {
                 Id = user.Id,
                 Email = user.Email,

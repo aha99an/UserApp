@@ -3,7 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UserApp.Core.Request;
 using UserApp.Data.Commands;
-using UserApp.Data.Queries.GetAllUsers;
+using UserApp.Data.Queries;
+using UserApp.Data.Queries.GetUsers;
 using UserApp.Data.Queries.GetUserById;
 
 
@@ -21,24 +22,36 @@ namespace UserApp.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetUserRequest>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] GetUsersRequest request)
         {
-            var users = await _mediator.Send(new GetAllUsersQuery());
-            return Ok(users);
+            var query = new GetUsersQuery(
+                request.Page,
+                request.PageSize,
+                request.Search,
+                request.SortColumn,
+                request.SortDirection);
+            
+            var result = await _mediator.Send(query);
+            
+            return result.Match<IActionResult>(
+                Ok,
+                BadRequest);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetUserRequest>> GetUserById(string id)
+        public async Task<IActionResult> GetUserById(string id)
         {
-            var user = await _mediator.Send(new GetUserByIdQuery(id));
-            if (user == null) return NotFound();
-            return Ok(user);
+            var result = await _mediator.Send(new GetUserByIdQuery(id));
+
+            return result.Match<IActionResult>(
+                Ok,
+                BadRequest);
         }
 
         [HttpPost]
-        public async Task<ActionResult<GetUserRequest>> CreateUser([FromBody] RegisterUserRequest newUser)
+        public async Task<IActionResult> CreateUser([FromBody] RegisterUserRequest newUser)
         {
-            ErrorOr<GetUserRequest> result = await _mediator.Send(new CreateUserCommand(newUser));
+            ErrorOr<GetUserResponse> result = await _mediator.Send(new CreateUserCommand(newUser));
 
             if (result.IsError)
             {

@@ -1,15 +1,8 @@
 ﻿using MediatR;
-using UserApp.Core.Request;
+using ErrorOr;
 
 namespace UserApp.Data.Queries.GetUserById
 {
-    public class GetUserByIdQuery : IRequest<GetUserRequest>
-    {
-        public string UserId { get; set; }
+    public sealed record GetUserByIdQuery(string UserId) : IRequest<ErrorOr<GetUserResponse>>;
 
-        public GetUserByIdQuery(string userId)
-        {
-            UserId = userId;
-        }
-    }
 }

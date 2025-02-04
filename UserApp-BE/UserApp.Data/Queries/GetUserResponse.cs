@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UserApp.Core.Request
+﻿namespace UserApp.Data.Queries
 {
-    public class GetUserRequest
+    public class GetUserResponse 
     {
         public string Id { get; set; }
         public string FirstName { get; set; }

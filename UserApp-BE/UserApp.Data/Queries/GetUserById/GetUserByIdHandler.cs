@@ -1,16 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserApp.Core.Models;
-using UserApp.Core.Request;
+using ErrorOr;
 
 namespace UserApp.Data.Queries.GetUserById
 {
-    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, GetUserRequest>
+    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, ErrorOr<GetUserResponse>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -19,12 +14,16 @@ namespace UserApp.Data.Queries.GetUserById
             _userManager = userManager;
         }
 
-        public async Task<GetUserRequest> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<GetUserResponse>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
-            if (user == null) return null;
 
-            return new GetUserRequest
+            if (user == null)
+            {
+                return Error.NotFound("User.NotFound", $"User with ID {request.UserId} was not found.");
+            }
+
+            return new GetUserResponse
             {
                 Id = user.Id,
                 Email = user.Email,

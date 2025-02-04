@@ -1,13 +1,78 @@
 <div class="container mt-4">
-  <button class="btn btn-primary" (click)="fetchUsers()">Get Users</button>
-</div>
+  <!-- Search Bar -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search users..."
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="onSearch()"
+    />
+    <button class="btn btn-primary mt-2" (click)="onSearch()">Search</button>
+  </div>
 
-<div *ngIf="users.length > 0" class="container mt-4">
-  <h2 class="mb-3">User List</h2>
-  
-  <ul class="list-group">
-    <li *ngFor="let user of users" class="list-group-item">
-      {{ user.firstName }} {{ user.lastName }} - {{ user.email }}
-    </li>
-  </ul>
+  <!-- Pagination Buttons -->
+  <div class="d-flex justify-content-between mb-3">
+    <button
+      class="btn btn-secondary"
+      [disabled]="currentPage === 1"
+      (click)="onPageChange(currentPage - 1)"
+    >
+      Previous
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="btn btn-secondary"
+      [disabled]="currentPage === totalPages"
+      (click)="onPageChange(currentPage + 1)"
+    >
+      Next
+    </button>
+  </div>
+
+  <!-- Display error messages if any -->
+  <div *ngIf="errorMessages.length > 0" class="alert alert-danger">
+    <h4>Errors:</h4>
+    <ul>
+      <li *ngFor="let error of errorMessages">
+        <strong>{{ error.code }}:</strong> {{ error.description }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Display user list if available -->
+  <div *ngIf="users.length > 0">
+    <h2 class="mb-3">User List (Total: {{ totalCount }})</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th (click)="onSortChange('FirstName')">
+            First Name
+            <span *ngIf="sortColumn === 'FirstName'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="onSortChange('LastName')">
+            Last Name
+            <span *ngIf="sortColumn === 'LastName'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="onSortChange('Email')">
+            Email
+            <span *ngIf="sortColumn === 'Email'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

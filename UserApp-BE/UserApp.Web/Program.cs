@@ -9,8 +9,6 @@ using UserApp.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var assemblyMarker = typeof(AssemblyMarker);
-
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AssemblyMarker>());
 
 builder.Services.AddValidatorsFromAssemblyContaining<AssemblyMarker>();
@@ -25,7 +23,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -33,9 +30,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin() // Allow requests from any origin
-            .AllowAnyHeader() // Allow any header
-            .AllowAnyMethod(); // Allow any HTTP method
+        policy.AllowAnyOrigin() 
+            .AllowAnyHeader() 
+            .AllowAnyMethod(); 
     });
 });
 var app = builder.Build();

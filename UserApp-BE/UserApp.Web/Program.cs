@@ -9,8 +9,6 @@ using UserApp.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var assemblyMarker = typeof(AssemblyMarker);
-
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AssemblyMarker>());
 
 builder.Services.AddValidatorsFromAssemblyContaining<AssemblyMarker>();
@@ -25,11 +23,21 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin() 
+            .AllowAnyHeader() 
+            .AllowAnyMethod(); 
+    });
+});
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -39,6 +47,8 @@ var app = builder.Build();
 }
 
 app.UseHttpsRedirection();
+
+
 
 app.UseAuthorization();
 
